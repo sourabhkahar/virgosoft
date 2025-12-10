@@ -4,9 +4,11 @@ export const useAuth = () => {
     const register = (data) => http.post('register', data);
     const login = (data) => http.post('login', data);
     const logout = () => http.post('logout');
+    const profile = () => http.get('profile');
     return {
         register,
         login,
-        logout
+        logout,
+        profile
     }
 }

@@ -3,12 +3,10 @@ import AppLayout from '@/components/layout/AppLayout.vue';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { order } from '@/api/order';
-import { useUserStore } from '@/store/index';
 import router from '@/router';
 import { ref } from 'vue';
 import config from '@/config';
 const orderApi = order();
-const storeUser = useUserStore();
 const isLoading = ref(false);
 const { handleSubmit, defineField, errors, resetForm } = useForm({
     validationSchema: yup.object({
@@ -18,10 +16,11 @@ const { handleSubmit, defineField, errors, resetForm } = useForm({
         amount: yup.number().required(),
     }),
 });
-const [ side, sideAttr ] = defineField('side',)
+const [ side, sideAttr ] = defineField('side')
 const [ symbol, symbolAttr ] = defineField('symbol')
 const [ price, priceAttr ] = defineField('price')
 const [ amount, amountAttr ] = defineField('amount')
+side.value = "buy";
 const onSubmitLogin = handleSubmit(async (values) => {
     try {
         
@@ -37,7 +36,6 @@ const onSubmitLogin = handleSubmit(async (values) => {
         isLoading.value = false;
 
     } catch (error) {
-        
         isLoading.value = false;
     }
 });
@@ -61,14 +59,14 @@ const onSubmitLogin = handleSubmit(async (values) => {
                     <label for="buy" class="flex items-center justify-center ">
                         <input
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 m-2"
-                        type="radio" id="buy" name="buy" value="buy"  v-model="side"
-                        v-bind="sideAttr" checked> 
+                        type="radio" id="buy" name="side" value="buy"  v-model="side"
+                        v-bind="sideAttr"> 
                         <span> Buy </span>
                     </label>
                     <label for="sell" class="flex items-center justify-center ">
                         <input
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 m-2"
-                        type="radio" id="sell" name="sell" value="sell"  v-model="side"
+                        type="radio" id="sell" name="side" value="sell"  v-model="side"
                         v-bind="sideAttr">
                         <span> Sell </span>
                     </label>
