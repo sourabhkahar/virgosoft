@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
-use App\Models\Asset;
 use App\Models\Order;
-use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +14,16 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $response = ['message' => 'Something went wrong','status' => 'error','data' => null];
+        try {
+            $orders = auth()->user()->load('orders');
+            $response['message'] = 'Orders fetched successfully';
+            $response['status'] = 'success';
+            $response['data'] = $orders->orders;
+            return response()->json($response, 200);
+        } catch (\Exception $th) {
+            return response()->json($response, 500);
+        }
     }
 
     /**
@@ -33,7 +40,7 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
         DB::beginTransaction();
-        $response = ['message' => 'Order creation failed','status' => 'error','data' => null];
+        $response = ['message' => 'Something went wrong','status' => 'error','data' => null];
         try {
 
             if($request->side == 'buy') {
@@ -67,7 +74,9 @@ class OrderController extends Controller
             ]);
     
             // Call Matching Service
-            // app(OrderMatchingService::class)->match($order);
+            $engine = new \App\Services\MatchingEngine();
+            $engine->match($order);     
+            
             $response['message'] = 'Order created successfully';
             $response['data'] = $order;
             $response['status'] = 'success';
@@ -75,7 +84,6 @@ class OrderController extends Controller
             return response()->json($response, 200);
         } catch (\Exception $th) {
             DB::rollBack(); 
-            $response['message'] = $th->getMessage();
             return response()->json($response, 500);
         }
     }

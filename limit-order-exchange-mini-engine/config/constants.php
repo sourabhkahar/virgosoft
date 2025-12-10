@@ -11,10 +11,9 @@ return [
         'filled' => 'filled',
         'cancelled' => 'cancelled'
     ],
-
-    'roles' => [
-        'admin',
-        'user',
-        'manager'
+    'sides' => [
+        'BUY' => 'buy',
+        'SELL' => 'sell',
     ]
+
 ];
