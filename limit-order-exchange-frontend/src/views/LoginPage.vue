@@ -57,15 +57,11 @@ const onSubmitLogin = handleSubmit(async (values) => {
                 <div class="text-red-500">{{ errors.password }}</div>
             </div>
             <button
-                class="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
+                class="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300 cursor-pointer"
                 type="submit" :disabled="isLoading">
                 <span v-if="!isLoading">Login</span>
                 <div v-else class="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             </button>
-            <a href="/registration"
-                class="text-indigo-500 hover:text-indigo-700 text-sm font-bold ml-4 flex justify-center">Don't have an
-                account? Register</a>
-
         </form>
     </div>
 </template>
