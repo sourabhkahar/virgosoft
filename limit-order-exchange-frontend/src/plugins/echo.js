@@ -8,7 +8,7 @@ export const echo = new Echo({
     key: import.meta.env.VITE_PUSHER_KEY,
     cluster: import.meta.env.VITE_PUSHER_CLUSTER,
     forceTLS: true,
-    authEndpoint: `http://localhost:8000/broadcasting/auth`,
+    authEndpoint: `${import.meta.env.VITE_BASE_URL}/broadcasting/auth`,
     wsHost: `ws-${import.meta.env.VITE_PUSHER_CLUSTER}.pusher.com`,
     wsPort: 443,
     wssPort: 443,
