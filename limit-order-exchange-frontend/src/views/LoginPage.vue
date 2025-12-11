@@ -24,7 +24,7 @@ const onSubmitLogin = handleSubmit(async (values) => {
     if (res.data.status == 'success') {
         storeUser.setUser(res.data);
         resetForm();
-        router.push('/profile');
+        router.push({name:'order-wallet'});
     } else {
         alert('Login failed. Please try again.');
     }
@@ -57,11 +57,14 @@ const onSubmitLogin = handleSubmit(async (values) => {
                 <div class="text-red-500">{{ errors.password }}</div>
             </div>
             <button
-                class="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300 cursor-pointer"
+                :class="[isLoading?'cursor-pointer-none':'cursor-pointer','w-full bg-gradient-to-r from-sky-600 to-cyan-400 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-cyan-600 transition duration-300 flex justify-center']"
                 type="submit" :disabled="isLoading">
                 <span v-if="!isLoading">Login</span>
                 <div v-else class="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             </button>
+            <a href="/registration"
+                class="text-cyan-500 hover:text-cyan-700 text-sm font-bold ml-4 flex justify-center">Already have an
+                account? Registration</a>
         </form>
     </div>
 </template>

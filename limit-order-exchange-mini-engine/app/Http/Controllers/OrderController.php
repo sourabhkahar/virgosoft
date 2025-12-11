@@ -15,8 +15,7 @@ class OrderController extends Controller
         $response = ['message' => 'Something went wrong', 'status' => 'error', 'data' => null];
         try {
             $symbol = $request->symbol;
-            $orders = auth()->user()->orders()->when($symbol,fn($q) => $q->where('symbol',$symbol))->get();
-            // return $orders;
+            $orders = auth()->user()->orders()->when($symbol,fn($q) => $q->where('symbol',$symbol))->orderBy('created_at','desc')->get();
             $response['message'] = 'Orders fetched successfully';
             $response['status'] = 'success';
             $response['data'] = $orders;
