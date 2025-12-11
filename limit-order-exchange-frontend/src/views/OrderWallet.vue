@@ -6,6 +6,7 @@ import { useUserStore } from '@/store';
 import { onMounted, ref } from 'vue';
 import config from '@/config';
 import ProfileCard from '@/components/ProfileCard.vue';
+import { toast } from 'vue3-toastify';
 
 const userStore = useUserStore();
 const orderApi = order();
@@ -51,6 +52,7 @@ onMounted(() => {
         .listen('.OrderMatched', () => {
             getAllOrders()
             proCard.value?.profile()
+            toast.info('Order have been matched. !');
     })
 })
 

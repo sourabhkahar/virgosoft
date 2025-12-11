@@ -35,7 +35,7 @@ class OrderController extends Controller
                 $totalCost = $request->price * $request->amount;
                 if (auth()->user()->balance < $totalCost) {
                     $response['message'] = 'Insufficient balance to place buy order';
-                    return response()->json($response, 400);
+                    return response()->json($response, 200);
                 }
                 auth()->user()->balance -= $totalCost;
                 auth()->user()->locked_balance += $totalCost;
@@ -44,7 +44,7 @@ class OrderController extends Controller
                 $asset = auth()->user()->assets()->where('symbol', $request->symbol)->first();
                 if (!$asset || $asset->amount < $request->amount) {
                     $response['message'] = 'Insufficient asset amount to place sell order';
-                    return response()->json($response, 400);
+                    return response()->json($response, 200);
                 }
 
                 $asset->amount -= $request->amount;
