@@ -5,6 +5,7 @@ import { useAuth } from '@/api/auth';
 import { useUserStore } from '@/store/index';
 import router from '@/router';
 import { ref } from 'vue';
+import { toast } from 'vue3-toastify';
 const auth = useAuth();
 const storeUser = useUserStore();
 const isLoading = ref(false);
@@ -20,14 +21,17 @@ const [ password, passwordAttr ] = defineField('password')
 const onSubmitLogin = handleSubmit(async (values) => {
     isLoading.value = true;
     const res = await auth.login(values);
-    isLoading.value = false;
     if (res.data.status == 'success') {
         storeUser.setUser(res.data);
         resetForm();
-        router.push({name:'order-wallet'});
+        toast.success('Login successfully. !');
+        setTimeout(function(){
+            router.push({name:'order-wallet'});
+        },2000)
     } else {
-        alert('Login failed. Please try again.');
+        toast.error('Login failed. Please try again. !');
     }
+    isLoading.value = false;
 });
 </script>
 <template>
