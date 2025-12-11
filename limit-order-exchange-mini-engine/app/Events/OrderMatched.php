@@ -20,6 +20,7 @@ class OrderMatched implements ShouldBroadcast
      */
     public function __construct($buyer, $seller, $trade)
     {
+        logger('i am Here',[$buyer,$seller,$trade]);
         $this->buyer = $buyer;
         $this->seller = $seller;
         $this->trade = $trade;

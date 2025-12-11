@@ -7,7 +7,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       meta: { requiresAuth: true, name: 'Home' },
-      redirect: { name: 'profile' }
+      redirect: { name: 'order-wallet' }
     },
     {
       path: '/login',
@@ -20,12 +20,6 @@ const router = createRouter({
       name: 'registration',
       component: () => import('../views/RegistrationView.vue'),
       meta: { requiresAuth: false, isGuest: true }
-    },
-    {
-      path: '/profile',
-      name: 'profile',
-      component: () => import('../views/ProfilePage.vue'),
-      meta: { requiresAuth: true, name: 'Profile' }
     },
     {
       path: '/limit-order',
@@ -49,7 +43,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !user.token) {
     next({ path: 'login' })
   } else if (user.token && (to.meta.isGuest)) {
-    next({ name: 'profile' })
+    next({ name: 'order-wallet' })
   } else {
     next()
   }
