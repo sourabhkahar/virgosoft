@@ -79,6 +79,10 @@ Run migrations:
 php artisan migrate
 ```
 
+``` bash
+php artisan db:seed
+```
+
 Start server:
 
 ``` bash
@@ -133,7 +137,7 @@ npm install
 
 ### Add `.env`
 
-    VITE_API_BASE_URL=http://localhost:8000/api
+    VITE_API_BASE_URL=http://localhost:8000/api(your base url)
     VITE_PUSHER_KEY=xxxx
     VITE_PUSHER_CLUSTER=ap2
 
