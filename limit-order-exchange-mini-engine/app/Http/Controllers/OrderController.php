@@ -3,47 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
+use App\Models\Asset;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $response = ['message' => 'Something went wrong','status' => 'error','data' => null];
+        $response = ['message' => 'Something went wrong', 'status' => 'error', 'data' => null];
         try {
-            $orders = auth()->user()->load('orders');
+            $symbol = $request->symbol;
+            $orders = auth()->user()->orders()->when($symbol,fn($q) => $q->where('symbol',$symbol))->get();
+            // return $orders;
             $response['message'] = 'Orders fetched successfully';
             $response['status'] = 'success';
-            $response['data'] = $orders->orders;
+            $response['data'] = $orders;
             return response()->json($response, 200);
         } catch (\Exception $th) {
             return response()->json($response, 500);
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(OrderRequest $request)
     {
         DB::beginTransaction();
-        $response = ['message' => 'Something went wrong','status' => 'error','data' => null];
+        $response = ['message' => 'Something went wrong', 'status' => 'error', 'data' => null];
         try {
 
-            if($request->side == 'buy') {
+            if ($request->side == 'buy') {
                 $totalCost = $request->price * $request->amount;
                 if (auth()->user()->balance < $totalCost) {
                     $response['message'] = 'Insufficient balance to place buy order';
@@ -72,51 +61,64 @@ class OrderController extends Controller
                 'status' => config('constants.statuses')['open'],
                 'testing' => false
             ]);
-    
+
             // Call Matching Service
             $engine = new \App\Services\MatchingEngine();
-            $engine->match($order);     
-            
+            $engine->match($order);
+
             $response['message'] = 'Order created successfully';
             $response['data'] = $order;
             $response['status'] = 'success';
-            DB::commit(); 
+            DB::commit();
             return response()->json($response, 200);
         } catch (\Exception $th) {
-            DB::rollBack(); 
+            DB::rollBack();
             return response()->json($response, 500);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
+    public function cancel(Order $id)
     {
-        //
-    }
+        $response = ['message' => 'Something went wrong', 'status' => 'error', 'data' => null];
+        try {
+            if (!$id) {
+                $response['message'] = 'Order Not Found';
+                return response()->json($response, 500);
+            }
+            $order = $id;
+            DB::transaction(function () use ($order) {
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
+                if ($order->side === 'buy') {
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
+                    $totalLocked = $order->price * $order->amount;
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
+                    $user = $order->user;
+
+                    $user->locked_balance -= $totalLocked;
+                    $user->balance += $totalLocked;
+                    $user->save();
+                } else if ($order->side === 'sell') {
+
+                    $asset = Asset::where('user_id', $order->user_id)
+                        ->where('symbol', $order->symbol)
+                        ->first();
+
+                    $asset->locked_amount -= $order->amount;
+                    $asset->amount += $order->amount;
+                    $asset->save();
+                }
+
+                $order->status = 'cancelled';
+                $order->save();
+            });
+
+            return response([
+                'status' => 'success',
+                'message' => 'Order cancelled successfully',
+                'order' => $order
+            ]);
+        } catch (\Exception $e) {
+            return response()->json($response, 500);
+        }
     }
 }
