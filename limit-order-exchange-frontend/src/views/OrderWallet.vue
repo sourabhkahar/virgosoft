@@ -53,6 +53,11 @@ onMounted(() => {
             proCard.value?.profile()
     })
 })
+
+function formatAmount(amount){
+    amount = Number(amount)
+    return amount ? amount.toFixed(2):amount
+}
 </script>
 
 <template>
@@ -85,7 +90,7 @@ onMounted(() => {
                                             class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium bg-red-50 text-red-600 inset-ring inset-ring-red-500/10">Cancel</span></a>
                                 </div>
                                 <p class="block mt-1 text-lg leading-tight font-medium text-black ">
-                                    {{ order.amount }} @ {{ order.price }}
+                                    {{ formatAmount(order.amount) }} @ {{ order.price }}
                                 </p>
                                 <p class="mt-2 text-slate-500">
                                     <span

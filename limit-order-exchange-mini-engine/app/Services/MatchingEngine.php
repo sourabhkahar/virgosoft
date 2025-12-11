@@ -88,12 +88,13 @@ class MatchingEngine
 
         $tradeValue = $executionPrice * $amount;
         $buyerLockedBalance = $buyOrder->price * $amount;
-        $fee = $tradeValue * self::COMMISSION_PERCENT;
+        $fee = $buyerLockedBalance * self::COMMISSION_PERCENT;
 
         $refund = max(0, $buyerLockedBalance - $tradeValue);
 
         if ($refund > 0) {
             $buyer->balance += $refund;
+            $buyer->locked_balance -= $refund;
         }
         // BUYER: USD locked → convert to real BTC
         $buyer->locked_balance -= $tradeValue;

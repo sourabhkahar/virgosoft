@@ -13,8 +13,8 @@ const { handleSubmit, defineField, errors, resetForm } = useForm({
     validationSchema: yup.object({
         side: yup.string().required(),
         symbol: yup.string().required(),
-        price: yup.number().required(),
-        amount: yup.number().required(),
+        price: yup.number().typeError('Please enter a valid number').required().min(1),
+        amount: yup.number().typeError('Please enter a valid number').required().min(1),
     }),
 });
 const [ side, sideAttr ] = defineField('side')
